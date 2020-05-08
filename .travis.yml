@@ -1,0 +1,18 @@
+os: linux
+dist: bionic
+language: c
+
+services:
+  - docker
+
+script:
+  - make --no-builtin-rules build
+  - make --no-builtin-rules test
+
+deploy:
+  provider: script
+  script:
+    # Needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables
+    - make --no-builtin-rules publish
+  on:
+    branch: master

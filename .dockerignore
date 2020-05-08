@@ -1,0 +1,8 @@
+*.log
+*.md
+.env
+.envrc
+artifacts/*.gz
+Dockerfile*
+LICENSE
+Makefile

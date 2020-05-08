@@ -1,0 +1,132 @@
+ARG UBUNTU_IMAGE
+FROM $UBUNTU_IMAGE
+
+ARG R_VERSION
+
+# set default locale
+ENV LANG C.UTF-8
+
+# set default timezone
+ENV TZ UTC
+
+# heroku uses /app
+RUN mkdir -p /app /app/bin /app/R/etc /app/R/site-library
+WORKDIR /app
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# enable package sources
+RUN sed -i "s|# deb-src|deb-src|g" /etc/apt/sources.list
+
+RUN apt-get update -q \
+ && apt-get install -qy --no-install-recommends \
+      apt-transport-https \
+      build-essential \
+      curl \
+      fakechroot \
+      fakeroot \
+      gnupg2 \
+      libcurl4-openssl-dev \
+      libicu-dev \
+      libopenblas-base \
+      libpcre2-dev \
+      lsb-release \
+      ruby \
+      tcl-dev \
+      tk-dev \
+      xz-utils
+
+# Tcl
+COPY tcl8.6.10-src.tar.gz tcl-src.tar.gz
+RUN tar xf tcl-src.tar.gz \
+ && rm tcl-src.tar.gz \
+ && cd tcl8.6.10/unix \
+ && ./configure --prefix=/app/tcltk \
+                --enable-shared \
+ && make \
+ && make install \
+ && cd /app \
+ && rm -rf tcl8.6.10
+
+# Tk
+COPY tk8.6.10-src.tar.gz tk-src.tar.gz
+RUN tar xf tk-src.tar.gz \
+ && rm tk-src.tar.gz \
+ && cd tk8.6.10/unix \
+ && export CPATH=/app/tcltk/include \
+ && ./configure --prefix=/app/tcltk \
+                --with-tcl=/app/tcltk/lib \
+                --enable-shared \
+ && make \
+ && make install \
+ && cd /app \
+ && rm -rf tk8.6.10
+
+# add R package apt sources
+RUN ubuntu_codename=$(lsb_release -c | awk '{print $2}') \
+ && echo "deb https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-cran35/" > /etc/apt/sources.list.d/cran.list \
+ && echo "deb-src https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-cran35/" >> /etc/apt/sources.list.d/cran.list
+
+# install R package key
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+
+# -> specifying the R version doesn't work with build-dep (potential version mismatch issue?)
+# RUN apt-get update -q && apt-get build-dep -qqy --no-install-recommends r-base=${R_VERSION}*
+RUN apt-get update -q \
+ && apt-get build-dep -qy --no-install-recommends r-base
+
+COPY R-$R_VERSION.tar.gz .
+RUN tar xzf R-$R_VERSION.tar.gz \
+ && rm R-$R_VERSION.tar.gz
+
+# https://cran.r-project.org/doc/manuals/R-admin.html#Installing-R-under-Unix_002dalikes
+
+RUN cd R-$R_VERSION \
+ && export DEBIAN_FRONTEND=noninteractive \
+ && export AWK=/usr/bin/awk \
+ && export LIBnn=lib \
+ && export PERL=/usr/bin/perl \
+ && export R_PDFVIEWER=/bin/false \
+ && export R_BROWSER=/bin/false \
+ && export R_PAPERSIZE=letter \
+ && export R_PRINTCMD=/usr/bin/lpr \
+ && export R_UNZIPCMD=/usr/bin/unzip \
+ && export R_ZIPCMD=/usr/bin/zip \
+ && ./configure --prefix=/app/R \
+                --with-blas \
+                --with-lapack \
+                --with-tcltk \
+                --with-tcl-config=/app/tcltk/lib/tclConfig.sh \
+                --with-tk-config=/app/tcltk/lib/tkConfig.sh \
+                --with-x \
+                --enable-R-shlib \
+                --enable-memory-profiling \
+ && make \
+ && make install
+
+# copy binary dependencies to ../R/lib
+COPY scripts/copy_libs.rb .
+RUN ruby copy_libs.rb
+
+# copy helpers and profile
+COPY scripts/helpers.R /app/R/etc/helpers.R
+COPY scripts/Rprofile /app/R/etc/Rprofile.site
+
+# clean up
+RUN rm -rf R-$R_VERSION \
+ && apt-get autoclean \
+ && rm -rf /var/lib/apt/lists/*
+
+# --- for running this image
+
+# set path for testing within docker container
+ENV PATH="/app/bin:/app/R/lib/R/bin:/app/tcltk/bin:$PATH"
+
+# resolve R libs
+ENV LD_LIBRARY_PATH="/app/R/lib/R/lib:/app/tcltk/lib:/app/.tools/lib"
+
+# set R profile for site
+ENV R_PROFILE="/app/R/etc/Rprofile.site"
+
+# run R without session saving
+CMD ["R", "--no-save"]

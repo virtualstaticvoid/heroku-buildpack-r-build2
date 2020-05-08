@@ -1,0 +1,5 @@
+#!/bin/bash
+
+BUILD_NO="${1:-`date +%Y%m%d-%H%M`}"
+
+make test 2>&1 | tee test-${BUILD_NO}.log

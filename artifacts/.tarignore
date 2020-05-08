@@ -1,0 +1,13 @@
+.
+.dockerenv
+/app
+/artifacts
+/build
+/dev
+/home/*
+/proc
+/sys
+/test
+/tmp/*
+/var/cache/man
+/var/log/*

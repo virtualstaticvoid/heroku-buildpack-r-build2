@@ -1,0 +1,11 @@
+ARG BUILD_IMAGE
+FROM $BUILD_IMAGE
+
+#
+# NOTE:
+#
+#  httpuv package build yields lots of deprecation warnings
+#  See https://github.com/rstudio/httpuv/issues/243 for more
+#
+
+RUN R --no-save --quiet --slave -e "install.packages('plumber', clean=TRUE)"
