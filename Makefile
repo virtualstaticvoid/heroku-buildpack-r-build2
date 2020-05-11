@@ -33,12 +33,12 @@ R-$(R_VERSION).tar.gz:
 tcl$(TCLTK_VERSION)-src.tar.gz:
 
 	# download tcl sources
-	curl -sLO ftp://ftp.tcl.tk/pub/tcl/tcl$(TCLTK_PATH)/tcl$(TCLTK_VERSION)-src.tar.gz
+	curl -sLO https://heroku-buildpack-r.s3.amazonaws.com/tcl$(TCLTK_VERSION)-src.tar.gz
 
 tk$(TCLTK_VERSION)-src.tar.gz:
 
 	# download tk sources
-	curl -sLO ftp://ftp.tcl.tk/pub/tcl/tcl$(TCLTK_PATH)/tk$(TCLTK_VERSION)-src.tar.gz
+	curl -sLO https://heroku-buildpack-r.s3.amazonaws.com/tk$(TCLTK_VERSION)-src.tar.gz
 
 .PHONY: .build_base
 .build_base: R-$(R_VERSION).tar.gz tcl$(TCLTK_VERSION)-src.tar.gz tk$(TCLTK_VERSION)-src.tar.gz
