@@ -5,6 +5,11 @@ language: c
 services:
   - docker
 
+addons:
+ snaps:
+   - name: aws-cli
+     confinement: classic
+
 script:
   - make --no-builtin-rules build
   - make --no-builtin-rules test
