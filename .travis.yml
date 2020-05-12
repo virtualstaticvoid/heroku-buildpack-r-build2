@@ -16,6 +16,7 @@ script:
 
 deploy:
   provider: script
+  skip_cleanup: true
   script:
     # Needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables
     - make --no-builtin-rules publish
