@@ -10,15 +10,23 @@ addons:
    - name: aws-cli
      confinement: classic
 
+env:
+  global:
+    - BUILDPACK_VERSION="builds/build-$TRAVIS_BUILD_NUMBER"
+  matrix:
+    - HEROKU_STACK=16
+    - HEROKU_STACK=18
+
 script:
   - make --no-builtin-rules build
   - make --no-builtin-rules test
+  - make --no-builtin-rules publish
 
 deploy:
   provider: script
   skip_cleanup: true
   script:
     # Needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables
-    - make --no-builtin-rules publish
+    - BUILDPACK_VERSION=latest make --no-builtin-rules publish
   on:
     branch: master
