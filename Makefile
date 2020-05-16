@@ -13,6 +13,7 @@ BUILDPACK_VERSION?=latest
 HEROKU_STACK?=18
 UBUNTU_IMAGE?=ubuntu:$(HEROKU_STACK).04
 
+PRE_BUILD_IMAGE:=$(BUILDPACK_NAME)-prebuild-$(R_VERSION):$(HEROKU_STACK)
 BUILD_IMAGE:=$(BUILDPACK_NAME)-build-$(R_VERSION):$(HEROKU_STACK)
 SHINY_IMAGE:=$(BUILDPACK_NAME)-shiny-$(R_VERSION):$(HEROKU_STACK)
 PLUMBER_IMAGE:=$(BUILDPACK_NAME)-plumber-$(R_VERSION):$(HEROKU_STACK)
@@ -43,8 +44,15 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 .build_base: R-$(R_VERSION).tar.gz tcl$(TCLTK_VERSION)-src.tar.gz tk$(TCLTK_VERSION)-src.tar.gz
 
 	# build R binaries
-	docker build --tag $(BUILD_IMAGE) \
+	docker build --tag $(PRE_BUILD_IMAGE) \
+							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
 							 --build-arg UBUNTU_IMAGE=$(UBUNTU_IMAGE) \
+							 --build-arg R_VERSION=$(R_VERSION) \
+							 --file Dockerfile.prebuild .
+
+	docker build --tag $(BUILD_IMAGE) \
+							 --build-arg PRE_BUILD_IMAGE=$(PRE_BUILD_IMAGE) \
+							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
 							 --build-arg R_VERSION=$(R_VERSION) \
 							 --file Dockerfile.build .
 
