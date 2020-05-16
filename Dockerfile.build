@@ -10,7 +10,7 @@ ENV LANG C.UTF-8
 ENV TZ UTC
 
 # heroku uses /app
-RUN mkdir -p /app /app/bin /app/R/etc /app/R/site-library
+RUN mkdir -p /app /app/bin /app/R/site-library
 WORKDIR /app
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -110,12 +110,13 @@ RUN ruby copy_libs.rb
 
 # copy helpers and profile
 COPY scripts/helpers.R /app/R/etc/helpers.R
-COPY scripts/Rprofile /app/R/etc/Rprofile.site
+COPY scripts/Rprofile.site /app/R/lib/R/etc/Rprofile.site
 
 # clean up
 RUN rm -rf R-$R_VERSION \
  && apt-get autoclean \
- && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/lists/* \
+ && touch /app/R/site-library/.keep
 
 # --- for running this image
 
@@ -125,8 +126,8 @@ ENV PATH="/app/bin:/app/R/lib/R/bin:/app/tcltk/bin:$PATH"
 # resolve R libs
 ENV LD_LIBRARY_PATH="/app/R/lib/R/lib:/app/tcltk/lib:/app/.tools/lib"
 
-# set R profile for site
-ENV R_PROFILE="/app/R/etc/Rprofile.site"
+# set user site library
+ENV R_LIBS_USER="/app/R/site-library"
 
 # run R without session saving
 CMD ["R", "--no-save"]
