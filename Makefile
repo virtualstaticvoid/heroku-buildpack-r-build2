@@ -40,8 +40,8 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 	# download tk sources
 	curl -sLO https://heroku-buildpack-r.s3.amazonaws.com/tk$(TCLTK_VERSION)-src.tar.gz
 
-.PHONY: .build_base
-.build_base: R-$(R_VERSION).tar.gz tcl$(TCLTK_VERSION)-src.tar.gz tk$(TCLTK_VERSION)-src.tar.gz
+.PHONY: .build_prebuild
+.build_prebuild: R-$(R_VERSION).tar.gz tcl$(TCLTK_VERSION)-src.tar.gz tk$(TCLTK_VERSION)-src.tar.gz
 
 	# build R binaries
 	docker build --tag $(PRE_BUILD_IMAGE) \
@@ -50,11 +50,17 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 							 --build-arg R_VERSION=$(R_VERSION) \
 							 --file Dockerfile.prebuild .
 
+.PHONY: .build_base
+.build_base:
+
 	docker build --tag $(BUILD_IMAGE) \
 							 --build-arg PRE_BUILD_IMAGE=$(PRE_BUILD_IMAGE) \
 							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
 							 --build-arg R_VERSION=$(R_VERSION) \
 							 --file Dockerfile.build .
+
+.PHONY: .build_base_archive
+.build_base_archive:
 
 	# this image is used during slug compilation
 	docker run --rm --volume "$(PWD)/artifacts:/artifacts" $(BUILD_IMAGE) \
@@ -63,7 +69,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
   # this archive is installed to /app/R side-by-side with project sources
   # "mounted" into chroot via /app
 	docker run --rm --volume "$(PWD)/artifacts:/artifacts" $(BUILD_IMAGE) \
-							 tar czf /artifacts/$(DEPLOY_ARCHIVE) R tcltk
+							 tar czf /artifacts/$(DEPLOY_ARCHIVE) R tcltk fakechroot
 
 .PHONY: .build_shiny
 .build_shiny:
@@ -107,7 +113,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 	# TODO: test for plumber image
 
 .PHONY: build
-build: .build_base .build_shiny .build_plumber
+build: .build_prebuild .build_base .build_base_archive .build_shiny .build_plumber
 
 .PHONY: test
 test: .test_base .test_shiny .test_plumber
