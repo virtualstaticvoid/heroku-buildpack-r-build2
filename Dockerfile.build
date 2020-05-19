@@ -9,6 +9,23 @@ FROM $PRE_BUILD_IMAGE
 ARG HEROKU_STACK
 ARG R_VERSION
 
+# working directory is /app
+
+# build fakechroot
+ARG FAKECHROOT_VER=2.20.1
+
+RUN git clone -b "$FAKECHROOT_VER" --single-branch --depth 1 https://github.com/dex4er/fakechroot.git fakechroot-src \
+ && cd fakechroot-src \
+ && ./autogen.sh \
+ && ./configure --prefix=/app/fakechroot \
+ && make > /dev/null \
+ && make install \
+ && cd .. \
+ && rm -rf fakechroot-src
+
+# copy chroot binary (seems to stand alone ~ from coreutils package)
+RUN cp /usr/sbin/chroot fakechroot/sbin/
+
 # copy binary dependencies to ../R/lib
 COPY scripts/copy_libs.rb .
 RUN ruby copy_libs.rb
