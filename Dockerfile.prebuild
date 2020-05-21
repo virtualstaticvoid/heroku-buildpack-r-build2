@@ -31,7 +31,6 @@ RUN apt-get update -q \
       automake \
       build-essential \
       curl \
-      fakechroot \
       fakeroot \
       gawk \
       git \
