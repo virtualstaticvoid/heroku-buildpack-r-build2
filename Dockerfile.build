@@ -23,9 +23,6 @@ RUN git clone -b "$FAKECHROOT_VER" --single-branch --depth 1 https://github.com/
  && cd .. \
  && rm -rf fakechroot-src
 
-# copy chroot binary (seems to stand alone ~ from coreutils package)
-RUN cp /usr/sbin/chroot fakechroot/sbin/
-
 # copy binary dependencies to ../R/lib
 COPY scripts/copy_libs.rb .
 RUN ruby copy_libs.rb
