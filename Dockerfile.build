@@ -12,9 +12,10 @@ ARG R_VERSION
 # working directory is /app
 
 # build fakechroot
-ARG FAKECHROOT_VER=2.20.1
+#ARG FAKECHROOT_VER=2.20.1
+ARG FAKECHROOT_VER=ldd
 
-RUN git clone -b "$FAKECHROOT_VER" --single-branch --depth 1 https://github.com/dex4er/fakechroot.git fakechroot-src \
+RUN git clone -b "$FAKECHROOT_VER" --single-branch --depth 1 https://github.com/virtualstaticvoid/fakechroot.git fakechroot-src \
  && cd fakechroot-src \
  && ./autogen.sh \
  && ./configure --prefix=/app/fakechroot \
