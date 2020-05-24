@@ -15,10 +15,11 @@ UBUNTU_IMAGE?=ubuntu:$(HEROKU_STACK).04
 
 PRE_BUILD_IMAGE:=$(BUILDPACK_NAME)-prebuild-$(R_VERSION):$(HEROKU_STACK)
 BUILD_IMAGE:=$(BUILDPACK_NAME)-build-$(R_VERSION):$(HEROKU_STACK)
+CHROOT_IMAGE:=$(BUILDPACK_NAME)-chroot-$(R_VERSION):$(HEROKU_STACK)
 SHINY_IMAGE:=$(BUILDPACK_NAME)-shiny-$(R_VERSION):$(HEROKU_STACK)
 PLUMBER_IMAGE:=$(BUILDPACK_NAME)-plumber-$(R_VERSION):$(HEROKU_STACK)
 
-BUILD_ARCHIVE:=$(BUILDPACK_NAME)-$(HEROKU_STACK)-$(R_VERSION)-build.tar.gz
+CHROOT_ARCHIVE:=$(BUILDPACK_NAME)-$(HEROKU_STACK)-$(R_VERSION)-chroot.tar.gz
 DEPLOY_ARCHIVE:=$(BUILDPACK_NAME)-$(HEROKU_STACK)-$(R_VERSION)-deploy.tar.gz
 SHINY_ARCHIVE:=$(BUILDPACK_NAME)-$(HEROKU_STACK)-$(R_VERSION)-shiny.tar.gz
 PLUM_ARCHIVE:=$(BUILDPACK_NAME)-$(HEROKU_STACK)-$(R_VERSION)-plumber.tar.gz
@@ -59,12 +60,20 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 							 --build-arg R_VERSION=$(R_VERSION) \
 							 --file Dockerfile.build .
 
-.PHONY: .build_base_archive
-.build_base_archive:
+.PHONY: .build_chroot
+.build_chroot:
+
+	docker build --tag $(CHROOT_IMAGE) \
+							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
+							 --build-arg R_VERSION=$(R_VERSION) \
+							 --file Dockerfile.chroot .
+
+.PHONY: .build_archives
+.build_archives:
 
 	# this image is used during slug compilation
-	docker run --rm --volume "$(PWD)/artifacts:/artifacts" $(BUILD_IMAGE) \
-							 tar czf /artifacts/$(BUILD_ARCHIVE) --exclude-from=/artifacts/.tarignore  /
+	docker run --rm --volume "$(PWD)/artifacts:/artifacts" $(CHROOT_IMAGE) \
+							 tar czf /artifacts/$(CHROOT_ARCHIVE) --exclude-from=/artifacts/.tarignore  /
 
   # this archive is installed to /app/R side-by-side with project sources
   # "mounted" into chroot via /app
@@ -113,7 +122,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 	# TODO: test for plumber image
 
 .PHONY: build
-build: .build_prebuild .build_base .build_base_archive .build_shiny .build_plumber
+build: .build_prebuild .build_base .build_chroot .build_archives .build_shiny .build_plumber
 
 .PHONY: test
 test: .test_base .test_shiny .test_plumber
@@ -123,8 +132,8 @@ publish:
 
 	# upload images to S3
 
-	aws s3 cp artifacts/$(BUILD_ARCHIVE) \
-			s3://$(BUILDPACK_NAME)/$(BUILDPACK_VERSION)/$(BUILD_ARCHIVE) \
+	aws s3 cp artifacts/$(CHROOT_ARCHIVE) \
+			s3://$(BUILDPACK_NAME)/$(BUILDPACK_VERSION)/$(CHROOT_ARCHIVE) \
 			--acl=public-read
 
 	aws s3 cp artifacts/$(DEPLOY_ARCHIVE) \
