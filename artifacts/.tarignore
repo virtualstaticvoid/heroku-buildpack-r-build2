@@ -6,8 +6,11 @@
 /dev
 /home/*
 /proc
+/run
+/srv
 /sys
 /test
 /tmp/*
+/usr/share/man/*
 /var/cache/man
 /var/log/*
