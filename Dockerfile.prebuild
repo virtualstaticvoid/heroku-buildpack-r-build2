@@ -39,6 +39,8 @@ RUN apt-get update -q \
       libicu-dev \
       libopenblas-base \
       libpcre2-dev \
+      libpq-dev \
+      libssl-dev \
       libtool \
       lsb-release \
       m4 \
