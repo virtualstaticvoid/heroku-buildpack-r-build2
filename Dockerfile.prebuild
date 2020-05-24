@@ -77,8 +77,8 @@ RUN tar xf tk-src.tar.gz \
 
 # add R package apt sources
 RUN ubuntu_codename=$(lsb_release -c | awk '{print $2}') \
- && echo "deb https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-cran35/" > /etc/apt/sources.list.d/cran.list \
- && echo "deb-src https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-cran35/" >> /etc/apt/sources.list.d/cran.list
+ && echo "deb https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-cran35/" > /etc/apt/sources.list.d/r.list \
+ && echo "deb-src https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-cran35/" >> /etc/apt/sources.list.d/r.list
 
 # install R package key
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
