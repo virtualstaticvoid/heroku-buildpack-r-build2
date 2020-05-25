@@ -76,6 +76,18 @@ RUN tar xf tk-src.tar.gz \
  && cd /app \
  && rm -rf tk8.6.10
 
+# TinyTeX
+RUN export TINYTEX_DIR=/app/TinyTeX \
+ && mkdir -p $TINYTEX_DIR \
+ && curl -sL https://yihui.name/gh/tinytex/tools/install-unx.sh | sh -s - --admin --no-path
+
+# pandoc
+ARG PANDOC_VERSION=2.9.2.1
+RUN curl -sL https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz -o pandoc.tar.gz \
+ && tar xf pandoc.tar.gz \
+ && mv pandoc-${PANDOC_VERSION} pandoc \
+ && rm pandoc.tar.gz
+
 # add R package apt sources
 RUN ubuntu_codename=$(lsb_release -c | awk '{print $2}') \
  && echo "deb https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-cran35/" > /etc/apt/sources.list.d/r.list \
@@ -125,3 +137,8 @@ RUN cd R-$R_VERSION \
 
 RUN cd R-$R_VERSION \
  && make install
+
+# make relative symlinks to R executables
+RUN cd /app/bin \
+ && ln -s ../R/bin/R . \
+ && ln -s ../R/bin/Rscript .
