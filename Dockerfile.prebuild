@@ -47,6 +47,7 @@ RUN apt-get update -q \
       ruby \
       tcl-dev \
       tk-dev \
+      wget \
       xz-utils
 
 # Tcl
