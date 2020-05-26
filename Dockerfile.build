@@ -44,13 +44,16 @@ RUN rm -rf R-$R_VERSION \
 # --- for running this image
 
 # set path for testing within docker container
-ENV PATH="/app/bin:/app/R/bin:/app/R/lib/R/bin:/app/tcltk/bin:$PATH"
+ENV PATH="/app/bin:/app/R/bin:/app/R/lib/R/bin:/app/tcltk/bin:/app/pandoc/bin:$PATH"
 
 # resolve R libs
 ENV LD_LIBRARY_PATH="/app/R/lib/R/lib:/app/tcltk/lib"
 
 # set user site library
 ENV R_LIBS_USER="/app/R/site-library"
+
+# so that R can find pandoc
+ENV RSTUDIO_PANDOC="/app/pandoc/bin"
 
 # run R without session saving
 CMD ["R", "--no-save"]

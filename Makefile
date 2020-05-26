@@ -78,7 +78,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
   # this archive is installed to /app/R side-by-side with project sources
   # "mounted" into chroot via /app
 	docker run --rm --volume "$(PWD)/artifacts:/artifacts" $(BUILD_IMAGE) \
-							 tar czf /artifacts/$(DEPLOY_ARCHIVE) R tcltk fakechroot
+							 tar czf /artifacts/$(DEPLOY_ARCHIVE) R tcltk pandoc fakechroot
 
 .PHONY: .build_shiny
 .build_shiny:

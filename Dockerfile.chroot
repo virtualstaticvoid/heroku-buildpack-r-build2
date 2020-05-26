@@ -39,6 +39,7 @@ RUN apt-get update -q \
       ruby \
       tcl-dev \
       tk-dev \
+      wget \
       xz-utils
 
 # figure out dependent packages of r-base-core and r-base-dev

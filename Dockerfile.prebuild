@@ -47,6 +47,7 @@ RUN apt-get update -q \
       ruby \
       tcl-dev \
       tk-dev \
+      wget \
       xz-utils
 
 # Tcl
@@ -75,6 +76,13 @@ RUN tar xf tk-src.tar.gz \
  && cd /app \
  && rm -rf tk8.6.10
 
+# pandoc
+ARG PANDOC_VERSION=2.9.2.1
+RUN curl -sL https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz -o pandoc.tar.gz \
+ && tar xf pandoc.tar.gz \
+ && mv pandoc-${PANDOC_VERSION} pandoc \
+ && rm pandoc.tar.gz
+
 # add R package apt sources
 RUN ubuntu_codename=$(lsb_release -c | awk '{print $2}') \
  && echo "deb https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-cran35/" > /etc/apt/sources.list.d/r.list \
@@ -99,9 +107,10 @@ RUN cd R-$R_VERSION \
  && export AWK=/usr/bin/awk \
  && export LIBnn=lib \
  && export PERL=/usr/bin/perl \
- && export R_PDFVIEWER=/bin/false \
  && export R_BROWSER=/bin/false \
+ && export R_LIBS_USER=/app/R/site-library \
  && export R_PAPERSIZE=letter \
+ && export R_PDFVIEWER=/bin/false \
  && export R_PRINTCMD=/usr/bin/lpr \
  && export R_UNZIPCMD=/usr/bin/unzip \
  && export R_ZIPCMD=/usr/bin/zip \
