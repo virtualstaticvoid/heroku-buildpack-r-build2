@@ -28,7 +28,6 @@ RUN apt-get update -q \
       apt-transport-https \
       autoconf \
       automake \
-      automake \
       build-essential \
       curl \
       fakeroot \
