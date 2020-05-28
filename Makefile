@@ -135,21 +135,21 @@ build: .build_prebuild .build_base .build_chroot .build_archives .build_shiny .b
 $(TEST_TASKS):
 
 	# generate name for volume
-	$(eval volname="buildpack_$(HEROKU_STACK)_$(BUILDPACK_VERSION)_$(subst .,,$@)")
+	$(eval volname=buildpack_$(HEROKU_STACK)_$(BUILDPACK_VERSION)_$(subst .,,$@))
 
 	# create volume to store test app
-	docker volume rm $(volname) || /bin/true
+	docker volume rm $(volname) 2>&1 /dev/null || /bin/true
 	docker volume create --name $(volname)
 
 	# copy test app into volume
-	docker run --rm \
+	docker run --tty --rm \
 						 --volume "$(volname):/heroku" \
 						 --volume "$(PWD)/$(subst .test_,test/,$@):/test" \
 						 $(UBUNTU_IMAGE) \
 						 /bin/bash -c 'mkdir -p /heroku/{buildpack,build,cache,env} && cd /test && cp -fR . /heroku/build'
 
 	# "compile" app
-	docker run --interactive --tty --rm \
+	docker run --tty --rm \
 						 --env R_VERSION=$(R_VERSION) \
 						 --env BUILDPACK_CLONE_URL=$(BUILDPACK_CLONE_URL) \
 						 --env BUILDPACK_BRANCH=$(BUILDPACK_BRANCH) \
@@ -168,23 +168,52 @@ test: $(TEST_TASKS)
 
 # -- PUBLISH
 
-.PHONY: publish
-publish:
+.PHONY: upload_artifacts
+upload_artifacts:
 
 	# upload images to S3
 
 	aws s3 cp artifacts/$(CHROOT_ARCHIVE) \
 			s3://$(BUILDPACK_NAME)/$(BUILDPACK_VERSION)/$(CHROOT_ARCHIVE) \
-			--acl=public-read
+			--acl=public-read \
+			--no-progress
 
 	aws s3 cp artifacts/$(DEPLOY_ARCHIVE) \
 			s3://$(BUILDPACK_NAME)/$(BUILDPACK_VERSION)/$(DEPLOY_ARCHIVE) \
-			--acl=public-read
+			--acl=public-read \
+			--no-progress
 
 	aws s3 cp artifacts/$(SHINY_ARCHIVE) \
 			s3://$(BUILDPACK_NAME)/$(BUILDPACK_VERSION)/$(SHINY_ARCHIVE) \
-			--acl=public-read
+			--acl=public-read \
+			--no-progress
 
 	aws s3 cp artifacts/$(PLUM_ARCHIVE) \
 			s3://$(BUILDPACK_NAME)/$(BUILDPACK_VERSION)/$(PLUM_ARCHIVE) \
-			--acl=public-read
+			--acl=public-read \
+			--no-progress
+
+.PHONY: publish
+publish:
+
+	# publish to default location
+
+	aws s3 cp s3://$(BUILDPACK_NAME)/$(BUILDPACK_VERSION)/$(CHROOT_ARCHIVE) \
+			s3://$(BUILDPACK_NAME)/latest/$(CHROOT_ARCHIVE) \
+			--acl=public-read \
+			--no-progress
+
+	aws s3 cp s3://$(BUILDPACK_NAME)/$(BUILDPACK_VERSION)/$(DEPLOY_ARCHIVE) \
+			s3://$(BUILDPACK_NAME)/latest/$(DEPLOY_ARCHIVE) \
+			--acl=public-read \
+			--no-progress
+
+	aws s3 cp s3://$(BUILDPACK_NAME)/$(BUILDPACK_VERSION)/$(SHINY_ARCHIVE) \
+			s3://$(BUILDPACK_NAME)/latest/$(SHINY_ARCHIVE) \
+			--acl=public-read \
+			--no-progress
+
+	aws s3 cp s3://$(BUILDPACK_NAME)/$(BUILDPACK_VERSION)/$(PLUM_ARCHIVE) \
+			s3://$(BUILDPACK_NAME)/latest/$(PLUM_ARCHIVE) \
+			--acl=public-read \
+			--no-progress
