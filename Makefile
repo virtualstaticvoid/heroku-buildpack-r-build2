@@ -4,8 +4,8 @@ all::
 .PHONY: all
 all:: build
 
-R_VERSION?=3.6.3
-CRAN_VERSION?=cran35
+R_VERSION?=4.0.0
+CRAN_VERSION?=cran40
 BUILDPACK_NAME?=heroku-buildpack-r
 BUILDPACK_VERSION?=latest
 
