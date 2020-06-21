@@ -27,10 +27,12 @@ PLUM_ARCHIVE:=$(BUILDPACK_NAME)-$(HEROKU_STACK)-$(R_VERSION)-plumber.tar.gz
 
 TCLTK_VERSION:=8.6.10
 
+R_VERSION_MAJOR:=$(shell echo "$(R_VERSION)" | awk '{split($$0,a,"."); print a[1]}')
+
 R-$(R_VERSION).tar.gz:
 
 	# download R sources
-	curl -sLO https://cran.rstudio.com/src/base/R-3/R-$(R_VERSION).tar.gz
+	curl -sLO https://cran.rstudio.com/src/base/R-$(R_VERSION_MAJOR)/R-$(R_VERSION).tar.gz
 
 tcl$(TCLTK_VERSION)-src.tar.gz:
 
