@@ -5,6 +5,7 @@ all::
 all:: build
 
 R_VERSION?=3.6.3
+CRAN_VERSION?=cran35
 BUILDPACK_NAME?=heroku-buildpack-r
 BUILDPACK_VERSION?=latest
 
@@ -49,6 +50,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
 							 --build-arg UBUNTU_IMAGE=$(UBUNTU_IMAGE) \
 							 --build-arg R_VERSION=$(R_VERSION) \
+							 --build-arg CRAN_VERSION=$(CRAN_VERSION) \
 							 --file Dockerfile.prebuild .
 
 .PHONY: .build_base
@@ -66,6 +68,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 	docker build --tag $(CHROOT_IMAGE) \
 							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
 							 --build-arg R_VERSION=$(R_VERSION) \
+							 --build-arg CRAN_VERSION=$(CRAN_VERSION) \
 							 --file Dockerfile.chroot .
 
 .PHONY: .build_archives
