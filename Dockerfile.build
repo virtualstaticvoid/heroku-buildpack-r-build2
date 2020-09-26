@@ -9,6 +9,8 @@ FROM $PRE_BUILD_IMAGE
 ARG HEROKU_STACK
 ARG R_VERSION
 
+ARG DEBIAN_FRONTEND=noninteractive
+
 # working directory is /app
 
 # build fakechroot
