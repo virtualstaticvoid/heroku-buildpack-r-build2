@@ -37,7 +37,7 @@ COPY scripts/Rprofile.site /app/R/lib/R/etc/Rprofile.site
 
 # clean up
 RUN rm -rf R-$R_VERSION \
- && apt-get autoclean \
+ && apt-get clean \
  && rm -rf /var/lib/apt/lists/* \
  && touch /app/R/site-library/.keep
 
