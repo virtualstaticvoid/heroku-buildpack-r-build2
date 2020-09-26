@@ -46,6 +46,8 @@ RUN apt-get update -q \
 COPY scripts/pkg_depends.rb .
 
 RUN PACKAGES=$(ruby pkg_depends.rb $R_VERSION) \
- && apt-get install -qy $PACKAGES
+ && apt-get install -qy $PACKAGES \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 RUN rm pkg_depends.rb

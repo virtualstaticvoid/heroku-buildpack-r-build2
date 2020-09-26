@@ -9,6 +9,8 @@ FROM $PRE_BUILD_IMAGE
 ARG HEROKU_STACK
 ARG R_VERSION
 
+ARG DEBIAN_FRONTEND=noninteractive
+
 # working directory is /app
 
 # build fakechroot
@@ -37,7 +39,7 @@ COPY scripts/Rprofile.site /app/R/lib/R/etc/Rprofile.site
 
 # clean up
 RUN rm -rf R-$R_VERSION \
- && apt-get autoclean \
+ && apt-get clean \
  && rm -rf /var/lib/apt/lists/* \
  && touch /app/R/site-library/.keep
 
