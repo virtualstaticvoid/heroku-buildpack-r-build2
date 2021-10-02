@@ -40,12 +40,15 @@ RUN apt-get update -q \
       tcl-dev \
       tk-dev \
       wget \
-      xz-utils
+      xz-utils \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 # figure out dependent packages of r-base-core and r-base-dev
 COPY scripts/pkg_depends.rb .
 
-RUN PACKAGES=$(ruby pkg_depends.rb $R_VERSION) \
+RUN apt-get update -q \
+ && PACKAGES=$(ruby pkg_depends.rb $R_VERSION) \
  && apt-get install -qy $PACKAGES \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*

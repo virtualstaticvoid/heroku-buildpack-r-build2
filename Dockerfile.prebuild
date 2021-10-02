@@ -48,7 +48,9 @@ RUN apt-get update -q \
       tcl-dev \
       tk-dev \
       wget \
-      xz-utils
+      xz-utils \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 # Tcl
 COPY tcl8.6.10-src.tar.gz tcl-src.tar.gz
@@ -94,7 +96,9 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD5
 # -> specifying the R version doesn't work with build-dep (potential version mismatch issue?)
 # RUN apt-get update -q && apt-get build-dep -qqy --no-install-recommends r-base=${R_VERSION}*
 RUN apt-get update -q \
- && apt-get build-dep -qy --no-install-recommends r-base
+ && apt-get build-dep -qy --no-install-recommends r-base \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 COPY R-$R_VERSION.tar.gz .
 RUN tar xzf R-$R_VERSION.tar.gz \
