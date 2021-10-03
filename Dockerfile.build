@@ -29,10 +29,6 @@ RUN git clone -b "$FAKECHROOT_VER" --single-branch --depth 1 https://github.com/
 # add R and tcltk libraries to ldd search paths
 COPY scripts/ldd.conf /etc/ld.so.conf.d/app-R-tcltk.conf
 
-# copy binary dependencies to ../R/lib
-COPY scripts/copy_libs.rb .
-RUN ruby copy_libs.rb
-
 # copy helpers and profile
 COPY scripts/helpers.R /app/R/etc/helpers.R
 COPY scripts/Rprofile.site /app/R/lib/R/etc/Rprofile.site
