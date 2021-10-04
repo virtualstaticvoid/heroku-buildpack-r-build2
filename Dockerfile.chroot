@@ -51,3 +51,13 @@ RUN PACKAGES=$(ruby pkg_depends.rb $R_VERSION) \
  && rm -rf /var/lib/apt/lists/*
 
 RUN rm pkg_depends.rb
+
+# rewrite symlinks for blas and lapack (don't use alternatives mechanism)
+RUN cd /usr/lib/x86_64-linux-gnu/ \
+  && ln -sf $(readlink /etc/alternatives/lapack.pc-x86_64-linux-gnu) lapack.pc \
+  && ln -sf $(readlink /etc/alternatives/libblas.a-x86_64-linux-gnu) libblas.a \
+  && ln -sf $(readlink /etc/alternatives/libblas.so.3-x86_64-linux-gnu) libblas.so.3 \
+  && ln -sf $(readlink /etc/alternatives/libblas.so-x86_64-linux-gnu) libblas.so \
+  && ln -sf $(readlink /etc/alternatives/liblapack.a-x86_64-linux-gnu) liblapack.a \
+  && ln -sf $(readlink /etc/alternatives/liblapack.so.3-x86_64-linux-gnu) liblapack.so.3 \
+  && ln -sf $(readlink /etc/alternatives/liblapack.so-x86_64-linux-gnu) liblapack.so
