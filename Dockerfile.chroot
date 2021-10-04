@@ -5,15 +5,13 @@ ARG HEROKU_STACK
 ARG R_VERSION
 ARG CRAN_VERSION
 
+# set default locale
+ENV LANG C.UTF-8
+
+# set default timezone
+ENV TZ UTC
+
 ARG DEBIAN_FRONTEND=noninteractive
-
-# add R package apt sources
-RUN ubuntu_codename=$(lsb_release -c | awk '{print $2}') \
- && echo "deb https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-$CRAN_VERSION/" > /etc/apt/sources.list.d/r.list \
- && echo "deb-src https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-$CRAN_VERSION/" >> /etc/apt/sources.list.d/r.list
-
-# install R package key
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 
 # install base utilities
 RUN apt-get update -q \
@@ -43,6 +41,14 @@ RUN apt-get update -q \
       xz-utils \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
+
+# add R package apt sources
+RUN ubuntu_codename=$(lsb_release -c | awk '{print $2}') \
+ && echo "deb https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-$CRAN_VERSION/" > /etc/apt/sources.list.d/r.list \
+ && echo "deb-src https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-$CRAN_VERSION/" >> /etc/apt/sources.list.d/r.list
+
+# install R package key
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 
 # figure out dependent packages of r-base-core and r-base-dev
 COPY scripts/pkg_depends.rb .
