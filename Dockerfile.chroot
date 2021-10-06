@@ -61,7 +61,11 @@ RUN apt-get update -q \
 
 RUN rm pkg_depends.rb
 
-# rewrite symlinks for blas and lapack (don't use alternatives mechanism)
+# add R and tcltk libraries to ldd search paths
+COPY scripts/ldd.conf /etc/ld.so.conf.d/app-R-tcltk.conf
+
+# rewrite symlinks for blas and lapack
+#  i.e. don't use alternatives mechanism for these components
 RUN cd /usr/lib/x86_64-linux-gnu/ \
   && ln -sf $(readlink /etc/alternatives/lapack.pc-x86_64-linux-gnu) lapack.pc \
   && ln -sf $(readlink /etc/alternatives/libblas.a-x86_64-linux-gnu) libblas.a \
