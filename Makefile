@@ -113,7 +113,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 .test_base:
 
 	# test build image
-	docker run --tty --rm --volume "$(PWD)/test:/test" $(BUILD_IMAGE) \
+	docker run --tty --rm --volume "$(PWD)/test/_build:/test" $(BUILD_IMAGE) \
 							 /bin/bash -l /test/test.sh
 
 .PHONY: .test_shiny
