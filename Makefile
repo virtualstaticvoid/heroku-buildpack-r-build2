@@ -138,13 +138,6 @@ build: .build_prebuild .build_base .build_chroot .build_archives .build_shiny .b
 
 # -- TEST
 
-.PHONY: .test_build
-.test_build:
-
-	# test build image
-	docker run --tty --rm --volume "$(PWD)/test:/test" $(BUILD_IMAGE) \
-							 /bin/bash -l /test/test.sh
-
 .PHONY: $(TEST_TASKS)
 $(TEST_TASKS):
 
@@ -174,7 +167,7 @@ $(TEST_TASKS):
 						 $(TEST_IMAGE)
 
 .PHONY: test
-test: .test_build $(TEST_TASKS)
+test: $(TEST_TASKS)
 
 # -- PUBLISH
 
