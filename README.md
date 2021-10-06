@@ -1,7 +1,5 @@
 # Heroku Buildpack R Build - [Second Edition][build2]
 
-[![Build Status][travis_build_img]][travis_build]
-
 Build for the [heroku-buildpack-r][buildpack] buildpack.
 
 ## Prerequisites
@@ -70,5 +68,3 @@ MIT License. Copyright (c) 2020 Chris Stefano. See [LICENSE](LICENSE) for detail
 [rbuilds]: https://github.com/rstudio/r-builds
 [rdocker]: https://github.com/rstudio/r-docker
 [signup]: https://github.com/signup/free
-[travis_build]: https://travis-ci.org/virtualstaticvoid/heroku-buildpack-r-build2
-[travis_build_img]: https://travis-ci.org/virtualstaticvoid/heroku-buildpack-r-build2.svg?branch=master
