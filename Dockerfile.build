@@ -26,9 +26,6 @@ RUN git clone -b "$FAKECHROOT_VER" --single-branch --depth 1 https://github.com/
  && cd .. \
  && rm -rf fakechroot-src
 
-# add R and tcltk libraries to ldd search paths
-COPY scripts/ldd.conf /etc/ld.so.conf.d/app-R-tcltk.conf
-
 # copy helpers and profile
 COPY scripts/helpers.R /app/R/etc/helpers.R
 COPY scripts/Rprofile.site /app/R/lib/R/etc/Rprofile.site
@@ -43,9 +40,6 @@ RUN rm -rf R-$R_VERSION \
 
 # set path for testing within docker container
 ENV PATH="/app/bin:/app/R/bin:/app/R/lib/R/bin:/app/tcltk/bin:/app/pandoc/bin:$PATH"
-
-# resolve R libs
-ENV LD_LIBRARY_PATH="/app/R/lib/R/lib:/app/tcltk/lib"
 
 # set user site library
 ENV R_LIBS_USER="/app/R/site-library"

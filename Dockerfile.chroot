@@ -5,15 +5,13 @@ ARG HEROKU_STACK
 ARG R_VERSION
 ARG CRAN_VERSION
 
+# set default locale
+ENV LANG C.UTF-8
+
+# set default timezone
+ENV TZ UTC
+
 ARG DEBIAN_FRONTEND=noninteractive
-
-# add R package apt sources
-RUN ubuntu_codename=$(lsb_release -c | awk '{print $2}') \
- && echo "deb https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-$CRAN_VERSION/" > /etc/apt/sources.list.d/r.list \
- && echo "deb-src https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-$CRAN_VERSION/" >> /etc/apt/sources.list.d/r.list
-
-# install R package key
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 
 # install base utilities
 RUN apt-get update -q \
@@ -40,14 +38,48 @@ RUN apt-get update -q \
       tcl-dev \
       tk-dev \
       wget \
-      xz-utils
+      xz-utils \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
+# add R package apt sources
+RUN ubuntu_codename=$(lsb_release -c | awk '{print $2}') \
+ && echo "deb https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-$CRAN_VERSION/" > /etc/apt/sources.list.d/r.list \
+ && echo "deb-src https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-$CRAN_VERSION/" >> /etc/apt/sources.list.d/r.list
+
+# install R package key
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 
 # figure out dependent packages of r-base-core and r-base-dev
 COPY scripts/pkg_depends.rb .
 
-RUN PACKAGES=$(ruby pkg_depends.rb $R_VERSION) \
+RUN apt-get update -q \
+ && PACKAGES=$(ruby pkg_depends.rb $R_VERSION) \
  && apt-get install -qy $PACKAGES \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
 RUN rm pkg_depends.rb
+
+# add R and tcltk libraries to ldd search paths
+COPY scripts/ldd.conf /etc/ld.so.conf.d/app-R-tcltk.conf
+
+# rewrite symlinks for blas and lapack
+#  i.e. don't use alternatives mechanism for these components
+RUN cd /usr/lib/x86_64-linux-gnu/ \
+  && ln -sf $(readlink /etc/alternatives/lapack.pc-x86_64-linux-gnu) lapack.pc \
+  && ln -sf $(readlink /etc/alternatives/libblas.a-x86_64-linux-gnu) libblas.a \
+  && ln -sf $(readlink /etc/alternatives/libblas.so.3-x86_64-linux-gnu) libblas.so.3 \
+  && ln -sf $(readlink /etc/alternatives/libblas.so-x86_64-linux-gnu) libblas.so \
+  && ln -sf $(readlink /etc/alternatives/liblapack.a-x86_64-linux-gnu) liblapack.a \
+  && ln -sf $(readlink /etc/alternatives/liblapack.so.3-x86_64-linux-gnu) liblapack.so.3 \
+  && ln -sf $(readlink /etc/alternatives/liblapack.so-x86_64-linux-gnu) liblapack.so \
+  && ln -sf $(readlink /etc/alternatives/blas.pc-x86_64-linux-gnu) blas.pc \
+  && ln -sf $(readlink /etc/alternatives/cblas.h-x86_64-linux-gnu) cblas.pc
+
+# convert symlinks from absolute to relative
+# since fakechroot ldd/ld doesn't reliably find libraries otherwise
+RUN git clone -b v1.4.3 --single-branch --depth 1 --quiet https://github.com/brandt/symlinks.git \
+ && ( cd symlinks && make ) \
+ && ( cd /usr/lib/x86_64-linux-gnu/ && /symlinks/symlinks -rc . | grep changed ) \
+ && rm -rf symlinks
