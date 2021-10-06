@@ -22,7 +22,7 @@ RUN mkdir -p $APP_DIR $BUILDPACK_DIR $BUILD_DIR $CACHE_DIR $ENV_DIR \
 # set BUILD_DIR as working directory
 # as this is where the "pushed" application files land
 WORKDIR $BUILD_DIR
-COPY e2e/init.R .
+COPY test/init.R .
 
 ENV BUILDPACK_CLONE_URL=https://github.com/virtualstaticvoid/heroku-buildpack-r.git
 ENV BUILDPACK_BRANCH=master
@@ -30,7 +30,7 @@ ENV BUILDPACK_VERSION=latest
 ENV BUILDPACK_CACHE_KEY=default
 ENV BUILDPACK_TEST=1
 
-COPY e2e/entrypoint.sh /entrypoint.sh
+COPY test/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 

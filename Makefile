@@ -25,7 +25,7 @@ CHROOT_IMAGE:=$(BUILDPACK_NAME)-chroot-$(R_VERSION):$(HEROKU_STACK)
 
 SHINY_IMAGE:=$(BUILDPACK_NAME)-shiny-$(R_VERSION):$(HEROKU_STACK)
 PLUMBER_IMAGE:=$(BUILDPACK_NAME)-plumber-$(R_VERSION):$(HEROKU_STACK)
-TEST_IMAGE:=$(BUILDPACK_NAME)-e2e-$(R_VERSION):$(HEROKU_STACK)
+TEST_IMAGE:=$(BUILDPACK_NAME)-test-$(R_VERSION):$(HEROKU_STACK)
 
 CHROOT_ARCHIVE:=$(BUILDPACK_NAME)-$(HEROKU_STACK)-$(R_VERSION)-chroot.tar.gz
 DEPLOY_ARCHIVE:=$(BUILDPACK_NAME)-$(HEROKU_STACK)-$(R_VERSION)-deploy.tar.gz
@@ -145,8 +145,8 @@ build: .build_prebuild .build_base .build_chroot .build_archives .build_shiny .b
 	docker run --tty --rm --volume "$(PWD)/test:/test" $(BUILD_IMAGE) \
 							 /bin/bash -l /test/test.sh
 
-.PHONY: $(E2E_TEST_TASKS)
-$(E2E_TEST_TASKS):
+.PHONY: $(TEST_TASKS)
+$(TEST_TASKS):
 
 	# create volume to store test app
 	docker volume rm buildpack_$(subst .,,$@) || /bin/true
@@ -155,7 +155,7 @@ $(E2E_TEST_TASKS):
 	# copy test app into volume
 	docker run --rm \
 						 --volume "buildpack_$(subst .,,$@):/heroku" \
-						 --volume "$(PWD)/$(subst .test_e2e_,e2e/,$@):/test" \
+						 --volume "$(PWD)/$(subst .test_,test/,$@):/test" \
 						 $(UBUNTU_IMAGE) \
 						 /bin/bash -c 'mkdir -p /heroku/{buildpack,build,cache,env} && cd /test && cp -fR . /heroku/build'
 
@@ -171,7 +171,7 @@ $(E2E_TEST_TASKS):
 						 --volume "$(PWD)/artifacts/$(DEPLOY_ARCHIVE):/heroku/cache/$(BUILDPACK_VERSION)-$(HEROKU_STACK)-$(BUILDPACK_CACHE_KEY)-deploy.tar.gz:ro" \
 						 --volume "$(PWD)/artifacts/$(SHINY_ARCHIVE):/heroku/cache/$(BUILDPACK_VERSION)-$(HEROKU_STACK)-$(BUILDPACK_CACHE_KEY)-shiny.tar.gz:ro" \
 						 --volume "$(PWD)/artifacts/$(PLUM_ARCHIVE):/heroku/cache/$(BUILDPACK_VERSION)-$(HEROKU_STACK)-$(BUILDPACK_CACHE_KEY)-plumber.tar.gz:ro" \
-						 $(E2E_IMAGE)
+						 $(TEST_IMAGE)
 
 .PHONY: test
 test: .test_build $(TEST_TASKS)
