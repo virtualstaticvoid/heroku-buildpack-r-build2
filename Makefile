@@ -154,6 +154,7 @@ $(TEST_TASKS):
 
 	# "compile" app
 	docker run --interactive --tty --rm \
+						 --env R_VERSION=$(R_VERSION) \
 						 --env BUILDPACK_CLONE_URL=$(BUILDPACK_CLONE_URL) \
 						 --env BUILDPACK_BRANCH=$(BUILDPACK_BRANCH) \
 						 --env BUILDPACK_VERSION=$(BUILDPACK_VERSION) \
