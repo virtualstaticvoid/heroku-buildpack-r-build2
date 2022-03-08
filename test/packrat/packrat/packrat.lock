@@ -1,27 +1,27 @@
 PackratFormat: 1.4
-PackratVersion: 0.5.0
-RVersion: 4.0.0
+PackratVersion: 0.7.0
+RVersion: 4.1.2
 Repos: CRAN=https://cloud.r-project.org
 
 Package: glue
 Source: CRAN
-Version: 1.4.0
-Hash: 21e4ea62a77239a9fc736d5b01338163
+Version: 1.6.2
+Hash: 830d10f9f46e05aadfe458d2d31849e7
 
 Package: magrittr
 Source: CRAN
-Version: 1.5
-Hash: bdc4d48c3135e8f3b399536ddf160df4
+Version: 2.0.2
+Hash: ed8cb1777254db1848a7c2657042d3dd
 
 Package: packrat
 Source: CRAN
-Version: 0.5.0
-Hash: 498643e765d1442ba7b1160a1df3abf9
+Version: 0.7.0
+Hash: 3d49688287bd2246cd8a58e233be39d5
 
 Package: stringi
 Source: CRAN
-Version: 1.4.6
-Hash: 076b0f115b37ca6d551ccff96b91114e
+Version: 1.7.6
+Hash: 81acb1046bfde93c2f07f71fb7dc2360
 
 Package: stringr
 Source: CRAN
