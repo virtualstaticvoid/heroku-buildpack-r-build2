@@ -2,10 +2,10 @@ os: linux
 dist: bionic
 language: c
 
-# only build master branch and PR's
+# only build main branch and PR's
 branches:
   only:
-    - master
+    - main
 
 services:
   - docker
@@ -34,4 +34,4 @@ deploy:
     # Needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables
     - BUILDPACK_VERSION=latest make --no-builtin-rules publish
   on:
-    branch: master
+    branch: main

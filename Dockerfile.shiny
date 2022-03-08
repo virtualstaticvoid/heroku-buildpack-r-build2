@@ -10,4 +10,4 @@ ARG DEBIAN_FRONTEND=noninteractive
 #  See https://github.com/rstudio/httpuv/issues/243 for more
 #
 
-RUN R --no-save --quiet --slave -e "install.packages('shiny', clean=TRUE)"
+RUN R --no-save --quiet -s -e "install.packages('shiny', clean=TRUE)"

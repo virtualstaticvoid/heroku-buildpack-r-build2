@@ -25,7 +25,7 @@ WORKDIR $BUILD_DIR
 COPY test/init.R .
 
 ENV BUILDPACK_CLONE_URL=https://github.com/virtualstaticvoid/heroku-buildpack-r.git
-ENV BUILDPACK_BRANCH=master
+ENV BUILDPACK_BRANCH=main
 ENV BUILDPACK_VERSION=latest
 ENV BUILDPACK_CACHE_KEY=default
 ENV BUILDPACK_TEST=1
