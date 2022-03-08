@@ -2,14 +2,8 @@
 # Example R program
 #
 
-library(gmp)
+library("topicmodels")
 
-# Integers are differents
-urand.bigz()
-urand.bigz()
-urand.bigz()
-# Integers are the same
-urand.bigz(seed="234234234324323")
-urand.bigz(seed="234234234324323")
-# Vector
-urand.bigz(nb=50,size=30)
+data("AssociatedPress", package = "topicmodels")
+lda <- LDA(AssociatedPress[1:20,], control = list(alpha = 0.1), k = 2)
+lda_inf <- posterior(lda, AssociatedPress[21:30,])
