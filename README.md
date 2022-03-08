@@ -32,7 +32,7 @@ The following build variables are available:
 |----------------------|--------------|---------|
 | `HEROKU_STACK`       | 20           | Corresponds to numeric suffix of the [Heroku Stack][heroku_stack]. Valid values include `18` and `20`. |
 | `UBUNTU_IMAGE`       | ubuntu:20.04 | The docker image for the Ubuntu image. Should correspond with the Ubuntu version of the Heroku Stack. |
-| `R_VERSION`          | 4.0.0        | The version of R to be built. |
+| `R_VERSION`          | 4.1.2        | The version of R to be built. |
 | `CRAN_VERSION`       | cran40       | The CRAN repository version. |
 | `BUILDPACK_VERSION`  | latest       | Version of the buildpack. This maps to the directory used on S3. Valid values include at least `latest` and `test`. |
 

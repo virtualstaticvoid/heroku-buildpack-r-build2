@@ -21,7 +21,7 @@ def find_dependent_pkgs(package)
       .collect {|s| s.split(" ").last }
 end
 
-R_VERSION = ARGV[0] || "4.0.0"
+R_VERSION = ARGV[0]
 
 dev = find_dependent_pkgs "r-base-dev=#{R_VERSION}*"
 dev.reject! {|s| s == "r-base-core" }
