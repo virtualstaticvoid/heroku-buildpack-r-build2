@@ -4,20 +4,7 @@ all::
 .PHONY: all
 all:: build
 
-R_VERSION?=4.1.2
-CRAN_VERSION?=cran40
-
-BUILDPACK_NAME?=heroku-buildpack-r
-BUILDPACK_VERSION?=latest
-BUILDPACK_REPO?=virtualstaticvoid/$(BUILDPACK_NAME)
-BUILDPACK_CLONE_URL:=https://github.com/$(BUILDPACK_REPO).git
-BUILDPACK_BRANCH?=main
-BUILDPACK_DEBUG?=
-
-# NOTE: UBUNTU_IMAGE and HEROKU_STACK should line up
-# e.g. heroku-18 == ubuntu:18.04
-HEROKU_STACK?=20
-UBUNTU_IMAGE?=ubuntu:$(HEROKU_STACK).04
+include Makefile.vars
 
 PRE_BUILD_IMAGE:=$(BUILDPACK_NAME)-prebuild-$(R_VERSION):$(HEROKU_STACK)
 BUILD_IMAGE:=$(BUILDPACK_NAME)-build-$(R_VERSION):$(HEROKU_STACK)
