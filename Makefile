@@ -47,8 +47,14 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 
 # -- BUILD
 
+.PHONY: .pull
+.pull:
+
+	docker pull heroku/heroku:$(HEROKU_STACK)
+	docker pull heroku/heroku:$(HEROKU_STACK)-build
+
 .PHONY: .build_prebuild
-.build_prebuild: R-$(R_VERSION).tar.gz tcl$(TCLTK_VERSION)-src.tar.gz tk$(TCLTK_VERSION)-src.tar.gz
+.build_prebuild: R-$(R_VERSION).tar.gz tcl$(TCLTK_VERSION)-src.tar.gz tk$(TCLTK_VERSION)-src.tar.gz .pull
 
 	# build R binaries
 	docker build --tag $(PRE_BUILD_IMAGE) \
