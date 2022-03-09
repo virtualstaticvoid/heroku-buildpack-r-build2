@@ -1,0 +1,5 @@
+install.packages("packrat")
+packrat::init()
+install.packages("stringr")
+packrat::snapshot()
+packrat::status()
