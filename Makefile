@@ -134,13 +134,16 @@ build: .build_prebuild .build_base .build_chroot .build_archives .build_shiny .b
 .PHONY: $(TEST_TASKS)
 $(TEST_TASKS):
 
+	# generate name for volume
+	$(eval volname="buildpack_$(HEROKU_STACK)_$(BUILDPACK_VERSION)_$(subst .,,$@)")
+
 	# create volume to store test app
-	docker volume rm buildpack_$(subst .,,$@) || /bin/true
-	docker volume create --name buildpack_$(subst .,,$@)
+	docker volume rm $(volname) || /bin/true
+	docker volume create --name $(volname)
 
 	# copy test app into volume
 	docker run --rm \
-						 --volume "buildpack_$(subst .,,$@):/heroku" \
+						 --volume "$(volname):/heroku" \
 						 --volume "$(PWD)/$(subst .test_,test/,$@):/test" \
 						 $(UBUNTU_IMAGE) \
 						 /bin/bash -c 'mkdir -p /heroku/{buildpack,build,cache,env} && cd /test && cp -fR . /heroku/build'
@@ -153,7 +156,7 @@ $(TEST_TASKS):
 						 --env BUILDPACK_VERSION=$(BUILDPACK_VERSION) \
 						 --env BUILDPACK_CACHE_KEY=$(BUILDPACK_CACHE_KEY) \
 						 --env BUILDPACK_DEBUG=$(BUILDPACK_DEBUG) \
-						 --volume "buildpack_$(subst .,,$@):/heroku" \
+						 --volume "$(volname):/heroku" \
 						 --volume "$(PWD)/artifacts/$(CHROOT_ARCHIVE):/heroku/cache/$(BUILDPACK_VERSION)-$(HEROKU_STACK)-$(BUILDPACK_CACHE_KEY)-build.tar.gz:ro" \
 						 --volume "$(PWD)/artifacts/$(DEPLOY_ARCHIVE):/heroku/cache/$(BUILDPACK_VERSION)-$(HEROKU_STACK)-$(BUILDPACK_CACHE_KEY)-deploy.tar.gz:ro" \
 						 --volume "$(PWD)/artifacts/$(SHINY_ARCHIVE):/heroku/cache/$(BUILDPACK_VERSION)-$(HEROKU_STACK)-$(BUILDPACK_CACHE_KEY)-shiny.tar.gz:ro" \
