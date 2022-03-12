@@ -24,6 +24,7 @@ RUN mkdir -p $APP_DIR $BUILDPACK_DIR $BUILD_DIR $CACHE_DIR $ENV_DIR \
 WORKDIR $BUILD_DIR
 COPY test/init.R .
 
+# ENV R_VERSION
 ENV BUILDPACK_CLONE_URL=https://github.com/virtualstaticvoid/heroku-buildpack-r.git
 ENV BUILDPACK_BRANCH=main
 ENV BUILDPACK_VERSION=latest
