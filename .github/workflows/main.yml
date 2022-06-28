@@ -16,6 +16,7 @@ jobs:
     strategy:
       matrix:
         heroku_stack:
+        - "22"
         - "20"
         - "18"
 
