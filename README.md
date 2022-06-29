@@ -38,10 +38,10 @@ The following build variables are available:
 | `CRAN_VERSION`       | cran40       | The CRAN repository version. |
 | `BUILDPACK_VERSION`  | latest       | Version of the buildpack. This maps to the directory used on S3. Valid values include at least `latest` and `test`. |
 
-E.g. To build for the `heroku-16` stack
+E.g. To build for the `heroku-20` stack
 
 ```
-export HEROKU_STACK=16
+export HEROKU_STACK=20
 make build
 make test
 make publish
