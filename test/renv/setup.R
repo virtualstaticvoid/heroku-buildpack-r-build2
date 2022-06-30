@@ -1,4 +1,4 @@
-install.packages("renv")
+install.packages("renv", quiet=TRUE)
 renv::init()
 renv::install("stringr")
 renv::snapshot()

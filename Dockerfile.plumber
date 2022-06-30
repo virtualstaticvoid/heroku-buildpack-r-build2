@@ -17,4 +17,4 @@ RUN apt-get update -q \
 #  See https://github.com/rstudio/httpuv/issues/243 for more
 #
 
-RUN R --no-save --quiet -s -e "install.packages('plumber', clean=TRUE)"
+RUN R --no-save --quiet -s -e "install.packages('plumber', clean=TRUE, quiet=TRUE)"

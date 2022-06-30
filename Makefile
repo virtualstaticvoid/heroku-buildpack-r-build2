@@ -134,6 +134,8 @@ build: .build_prebuild .build_base .build_chroot .build_archives .build_shiny .b
 .PHONY: $(TEST_TASKS)
 $(TEST_TASKS):
 
+	@echo "Executing $(subst .test_,,$@) test..."
+
 	# generate name for volume
 	$(eval volname=buildpack_$(HEROKU_STACK)_$(BUILDPACK_VERSION)_$(subst .,,$@))
 
@@ -156,6 +158,7 @@ $(TEST_TASKS):
 						 --env BUILDPACK_VERSION=$(BUILDPACK_VERSION) \
 						 --env BUILDPACK_CACHE_KEY=$(BUILDPACK_CACHE_KEY) \
 						 --env BUILDPACK_DEBUG=$(BUILDPACK_DEBUG) \
+						 --env PACKAGE_INSTALL_VERBOSE=$(PACKAGE_INSTALL_VERBOSE) \
 						 --volume "$(volname):/heroku" \
 						 --volume "$(PWD)/artifacts/$(CHROOT_ARCHIVE):/heroku/cache/$(BUILDPACK_VERSION)-$(HEROKU_STACK)-$(BUILDPACK_CACHE_KEY)-build.tar.gz:ro" \
 						 --volume "$(PWD)/artifacts/$(DEPLOY_ARCHIVE):/heroku/cache/$(BUILDPACK_VERSION)-$(HEROKU_STACK)-$(BUILDPACK_CACHE_KEY)-deploy.tar.gz:ro" \
