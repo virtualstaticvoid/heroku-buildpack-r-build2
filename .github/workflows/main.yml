@@ -21,6 +21,7 @@ jobs:
 
     env:
       HEROKU_STACK: ${{ matrix.heroku_stack }}
+      BUILDPACK_BRANCH: feat/heroku-22
 
     steps:
       - name: Checkout Code
