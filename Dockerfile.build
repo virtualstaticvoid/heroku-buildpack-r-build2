@@ -15,7 +15,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # build fakechroot
 #ARG FAKECHROOT_VER=2.20.1
-ARG FAKECHROOT_VER=ldd
+ARG FAKECHROOT_VER=ldd2
 
 RUN git clone -b "$FAKECHROOT_VER" --single-branch --depth 1 https://github.com/virtualstaticvoid/fakechroot.git fakechroot-src \
  && cd fakechroot-src \

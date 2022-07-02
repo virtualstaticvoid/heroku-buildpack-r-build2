@@ -44,11 +44,13 @@ RUN apt-get update -q \
 
 # add R package apt sources
 RUN ubuntu_codename=$(lsb_release -c | awk '{print $2}') \
- && echo "deb https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-$CRAN_VERSION/" > /etc/apt/sources.list.d/r.list \
- && echo "deb-src https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-$CRAN_VERSION/" >> /etc/apt/sources.list.d/r.list
-
-# install R package key
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+ && keyid=E298A3A825C0D65DFD57CBB651716619E084DAB9 \
+ && export GNUPGHOME="$(mktemp -d)" \
+ && gpg --recv-keys --keyserver keyserver.ubuntu.com $keyid \
+ && mkdir -p /etc/apt/keyrings \
+ && gpg --export $keyid > /etc/apt/keyrings/cloud.r-project.org.gpg \
+ && echo "deb [signed-by=/etc/apt/keyrings/cloud.r-project.org.gpg] https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-$CRAN_VERSION/" > /etc/apt/sources.list.d/r.list \
+ && echo "deb-src [signed-by=/etc/apt/keyrings/cloud.r-project.org.gpg] https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-$CRAN_VERSION/" >> /etc/apt/sources.list.d/r.list
 
 # figure out dependent packages of r-base-core and r-base-dev
 COPY scripts/pkg_depends.rb .
@@ -83,3 +85,14 @@ RUN git clone -b v1.4.3 --single-branch --depth 1 --quiet https://github.com/bra
  && ( cd symlinks && make ) \
  && ( cd /usr/lib/x86_64-linux-gnu/ && /symlinks/symlinks -rc . | grep changed ) \
  && rm -rf symlinks
+
+#
+# clear out dpkg overrides, to avoid the following error
+#
+#  dpkg: unrecoverable fatal error, aborting:
+#   unknown system group '....' in statoverride file; the system group got removed
+#  before the override, which is most probably a packaging bug, to recover you
+#  can remove the override manually with dpkg-statoverride
+#
+RUN rm /var/lib/dpkg/statoverride \
+ && touch /var/lib/dpkg/statoverride

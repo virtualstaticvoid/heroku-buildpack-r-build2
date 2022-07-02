@@ -30,6 +30,10 @@ BUILDPACK_CACHE_KEY:=$(shell curl -sL https://raw.githubusercontent.com/$(BUILDP
 TEST_DIRS:=$(shell cd test && find . -maxdepth 1 -type d | cut -c 3-)
 TEST_TASKS:=$(addprefix .test_,$(TEST_DIRS))
 
+ifeq ("$(BUILDPACK_TEST_DEBUG)","1")
+TEST_INTERACTIVE:="--interactive"
+endif
+
 R-$(R_VERSION).tar.gz:
 
 	# download R sources
@@ -134,28 +138,32 @@ build: .build_prebuild .build_base .build_chroot .build_archives .build_shiny .b
 .PHONY: $(TEST_TASKS)
 $(TEST_TASKS):
 
+	@echo "Executing $(subst .test_,,$@) test..."
+
 	# generate name for volume
 	$(eval volname=buildpack_$(HEROKU_STACK)_$(BUILDPACK_VERSION)_$(subst .,,$@))
 
 	# create volume to store test app
-	docker volume rm $(volname) 2>&1 /dev/null || /bin/true
-	docker volume create --name $(volname)
+	@docker volume rm $(volname) || /bin/true
+	@docker volume create --name $(volname)
 
 	# copy test app into volume
-	docker run --tty --rm \
+	@docker run --tty --rm \
 						 --volume "$(volname):/heroku" \
 						 --volume "$(PWD)/$(subst .test_,test/,$@):/test" \
 						 $(UBUNTU_IMAGE) \
 						 /bin/bash -c 'mkdir -p /heroku/{buildpack,build,cache,env} && cd /test && cp -fR . /heroku/build'
 
 	# "compile" app
-	docker run --tty --rm \
+	docker run --tty --rm $(TEST_INTERACTIVE) \
 						 --env R_VERSION=$(R_VERSION) \
 						 --env BUILDPACK_CLONE_URL=$(BUILDPACK_CLONE_URL) \
 						 --env BUILDPACK_BRANCH=$(BUILDPACK_BRANCH) \
 						 --env BUILDPACK_VERSION=$(BUILDPACK_VERSION) \
 						 --env BUILDPACK_CACHE_KEY=$(BUILDPACK_CACHE_KEY) \
 						 --env BUILDPACK_DEBUG=$(BUILDPACK_DEBUG) \
+						 --env BUILDPACK_TEST_DEBUG=$(BUILDPACK_TEST_DEBUG) \
+						 --env PACKAGE_INSTALL_VERBOSE=$(PACKAGE_INSTALL_VERBOSE) \
 						 --volume "$(volname):/heroku" \
 						 --volume "$(PWD)/artifacts/$(CHROOT_ARCHIVE):/heroku/cache/$(BUILDPACK_VERSION)-$(HEROKU_STACK)-$(BUILDPACK_CACHE_KEY)-build.tar.gz:ro" \
 						 --volume "$(PWD)/artifacts/$(DEPLOY_ARCHIVE):/heroku/cache/$(BUILDPACK_VERSION)-$(HEROKU_STACK)-$(BUILDPACK_CACHE_KEY)-deploy.tar.gz:ro" \
