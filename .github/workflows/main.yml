@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Build & Test - Heroku ${{ matrix.heroku_stack }}
+    name: Heroku ${{ matrix.heroku_stack }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -21,18 +21,11 @@ jobs:
 
     env:
       HEROKU_STACK: ${{ matrix.heroku_stack }}
-      BUILDPACK_BRANCH: feat/heroku-22
+      BUILDPACK_BRANCH: _next
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-
-      - name: Generate Build ID
-        id: metadata
-        run: |
-          branch=${GITHUB_REF##*/}
-          sha=${GITHUB_SHA::8}
-          echo "::set-output name=BUILD_ID::${branch}-${sha}"
 
       - name: Build
         run: make --no-builtin-rules build
@@ -48,8 +41,8 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Upload Artifacts
-        run: make --no-builtin-rules upload_artifacts BUILDPACK_VERSION=${{ steps.metadata.outputs.BUILD_ID }}
+        run: make --no-builtin-rules upload_artifacts BUILDPACK_VERSION=${GITHUB_SHA}
 
       - name: Publish
         if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags') }}
-        run: make --no-builtin-rules publish BUILDPACK_VERSION=${{ steps.metadata.outputs.BUILD_ID }}
+        run: make --no-builtin-rules publish BUILDPACK_VERSION=${GITHUB_SHA}
