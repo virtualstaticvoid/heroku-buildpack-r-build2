@@ -10,17 +10,39 @@ on:
 
 jobs:
   build:
-    name: Heroku ${{ matrix.heroku_stack }}
+    name: Heroku-${{ matrix.heroku_stack }} - R${{ matrix.r_version }}
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        heroku_stack:
-        - "22"
-        - "20"
+
+        # use `apt-cache policy r-base-dev` to determine
+        # combinations per ubuntu version
+
+        include:
+
+          - heroku_stack: "22"
+            r_version: "4.2.1"
+          - heroku_stack: "22"
+            r_version: "4.1.2"
+
+          - heroku_stack: "20"
+            r_version: "4.2.1"
+          - heroku_stack: "20"
+            r_version: "4.1.3"
+          - heroku_stack: "20"
+            r_version: "4.0.5"
+
+          - heroku_stack: "18"
+            r_version: "4.2.0"
+          - heroku_stack: "18"
+            r_version: "4.1.3"
+          - heroku_stack: "18"
+            r_version: "4.0.5"
 
     env:
       HEROKU_STACK: ${{ matrix.heroku_stack }}
+      R_VERSION: ${{ matrix.r_version }}
       BUILDPACK_BRANCH: _next
 
     steps:
