@@ -1,6 +1,6 @@
 # Heroku Buildpack R Build - [Second Edition][build2]
 
-![CI](https://github.com/virtualstaticvoid/heroku-buildpack-r-build2/workflows/CI/badge.svg)
+[![CI](https://github.com/virtualstaticvoid/heroku-buildpack-r-build2/actions/workflows/main.yml/badge.svg)](https://github.com/virtualstaticvoid/heroku-buildpack-r-build2/actions/workflows/main.yml)
 
 Build for the [heroku-buildpack-r][buildpack] buildpack.
 
