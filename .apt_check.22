@@ -1,0 +1,10 @@
+r-base-dev:
+  Installed: (none)
+  Candidate: 4.2.1-1.2204.0
+  Version table:
+     4.2.1-1.2204.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/ Packages
+     4.2.0-1.2204.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/ Packages
+     4.1.2-1ubuntu2 500
+        500 http://archive.ubuntu.com/ubuntu jammy/universe amd64 Packages

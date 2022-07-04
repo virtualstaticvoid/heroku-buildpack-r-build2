@@ -6,6 +6,7 @@ all:: build
 
 include Makefile.vars
 
+APT_VERSION_IMAGE:=$(BUILDPACK_NAME)-apt-$(R_VERSION):$(HEROKU_STACK)
 PRE_BUILD_IMAGE:=$(BUILDPACK_NAME)-prebuild-$(R_VERSION):$(HEROKU_STACK)
 BUILD_IMAGE:=$(BUILDPACK_NAME)-build-$(R_VERSION):$(HEROKU_STACK)
 CHROOT_IMAGE:=$(BUILDPACK_NAME)-chroot-$(R_VERSION):$(HEROKU_STACK)
@@ -56,6 +57,16 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 
 	docker pull heroku/heroku:$(HEROKU_STACK)
 	docker pull heroku/heroku:$(HEROKU_STACK)-build
+
+.PHONY: .apt_check
+.apt_check:
+
+	docker build --tag $(APT_VERSION_IMAGE) \
+							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
+							 --build-arg CRAN_VERSION=$(CRAN_VERSION) \
+							 --file Dockerfile.check .
+
+	docker run --tty --rm $(APT_VERSION_IMAGE) > .apt_check.$(HEROKU_STACK)
 
 .PHONY: .build_prebuild
 .build_prebuild: R-$(R_VERSION).tar.gz tcl$(TCLTK_VERSION)-src.tar.gz tk$(TCLTK_VERSION)-src.tar.gz .pull
