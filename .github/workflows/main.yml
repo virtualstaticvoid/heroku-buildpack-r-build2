@@ -56,8 +56,8 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Upload Artifacts
-        run: make --no-builtin-rules upload_artifacts BUILDPACK_VERSION=${GITHUB_SHA}
+        run: make --no-builtin-rules upload_artifacts BUILDPACK_VERSION=builds/${GITHUB_RUN_ID}
 
       - name: Publish
         if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags') }}
-        run: make --no-builtin-rules publish BUILDPACK_VERSION=${GITHUB_SHA}
+        run: make --no-builtin-rules publish BUILDPACK_VERSION=builds/${GITHUB_RUN_ID}
