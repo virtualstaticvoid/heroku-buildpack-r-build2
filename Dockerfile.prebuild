@@ -82,7 +82,7 @@ RUN tar xf tk-src.tar.gz \
  && rm -rf tk${TCLTK_VERSION}
 
 # pandoc
-ARG PANDOC_VERSION=2.9.2.1
+ARG PANDOC_VERSION
 RUN curl -sL https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz -o pandoc.tar.gz \
  && tar xf pandoc.tar.gz \
  && mv pandoc-${PANDOC_VERSION} pandoc \

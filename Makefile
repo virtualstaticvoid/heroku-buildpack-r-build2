@@ -21,6 +21,7 @@ SHINY_ARCHIVE:=$(BUILDPACK_NAME)-$(HEROKU_STACK)-$(R_VERSION)-shiny.tar.gz
 PLUM_ARCHIVE:=$(BUILDPACK_NAME)-$(HEROKU_STACK)-$(R_VERSION)-plumber.tar.gz
 
 TCLTK_VERSION:=9.0.1
+PANDOC_VERSION:=3.6.1
 
 R_VERSION_MAJOR:=$(shell echo "$(R_VERSION)" | awk '{split($$0,a,"."); print a[1]}')
 
@@ -78,6 +79,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 							 --build-arg R_VERSION=$(R_VERSION) \
 							 --build-arg CRAN_VERSION=$(CRAN_VERSION) \
 							 --build-arg TCLTK_VERSION=$(TCLTK_VERSION) \
+							 --build-arg PANDOC_VERSION=$(PANDOC_VERSION) \
 							 --file Dockerfile.prebuild .
 
 .PHONY: .build_base
