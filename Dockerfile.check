@@ -4,10 +4,10 @@ FROM heroku/heroku:$HEROKU_STACK-build
 ARG CRAN_VERSION
 
 # set default locale
-ENV LANG C.UTF-8
+ENV LANG=C.UTF-8
 
 # set default timezone
-ENV TZ UTC
+ENV TZ=UTC
 
 ARG DEBIAN_FRONTEND=noninteractive
 
