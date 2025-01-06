@@ -54,23 +54,24 @@ RUN apt-get update -q \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-# Tcl
-COPY tcl8.6.10-src.tar.gz tcl-src.tar.gz
+# Tcl / Tk
+ARG TCLTK_VERSION
+
+COPY tcl${TCLTK_VERSION}-src.tar.gz tcl-src.tar.gz
 RUN tar xf tcl-src.tar.gz \
  && rm tcl-src.tar.gz \
- && cd tcl8.6.10/unix \
+ && cd tcl${TCLTK_VERSION}/unix \
  && ./configure --prefix=/app/tcltk \
                 --enable-shared \
  && make > /dev/null \
  && make install \
  && cd /app \
- && rm -rf tcl8.6.10
+ && rm -rf tcl${TCLTK_VERSION}
 
-# Tk
-COPY tk8.6.10-src.tar.gz tk-src.tar.gz
+COPY tk${TCLTK_VERSION}-src.tar.gz tk-src.tar.gz
 RUN tar xf tk-src.tar.gz \
  && rm tk-src.tar.gz \
- && cd tk8.6.10/unix \
+ && cd tk${TCLTK_VERSION}/unix \
  && export CPATH=/app/tcltk/include \
  && ./configure --prefix=/app/tcltk \
                 --with-tcl=/app/tcltk/lib \
@@ -78,7 +79,7 @@ RUN tar xf tk-src.tar.gz \
  && make > /dev/null \
  && make install \
  && cd /app \
- && rm -rf tk8.6.10
+ && rm -rf tk${TCLTK_VERSION}
 
 # pandoc
 ARG PANDOC_VERSION=2.9.2.1

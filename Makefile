@@ -20,7 +20,7 @@ DEPLOY_ARCHIVE:=$(BUILDPACK_NAME)-$(HEROKU_STACK)-$(R_VERSION)-deploy.tar.gz
 SHINY_ARCHIVE:=$(BUILDPACK_NAME)-$(HEROKU_STACK)-$(R_VERSION)-shiny.tar.gz
 PLUM_ARCHIVE:=$(BUILDPACK_NAME)-$(HEROKU_STACK)-$(R_VERSION)-plumber.tar.gz
 
-TCLTK_VERSION:=8.6.10
+TCLTK_VERSION:=9.0.1
 
 R_VERSION_MAJOR:=$(shell echo "$(R_VERSION)" | awk '{split($$0,a,"."); print a[1]}')
 
@@ -77,6 +77,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 							 --build-arg UBUNTU_IMAGE=$(UBUNTU_IMAGE) \
 							 --build-arg R_VERSION=$(R_VERSION) \
 							 --build-arg CRAN_VERSION=$(CRAN_VERSION) \
+							 --build-arg TCLTK_VERSION=$(TCLTK_VERSION) \
 							 --file Dockerfile.prebuild .
 
 .PHONY: .build_base
