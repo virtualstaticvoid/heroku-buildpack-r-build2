@@ -37,7 +37,7 @@ RUN apt-get update -q \
       gnupg2 \
       libcurl4-openssl-dev \
       libicu-dev \
-      libopenblas-base \
+      libopenblas-dev \
       libpcre2-dev \
       libpq-dev \
       libssl-dev \
