@@ -13,6 +13,9 @@ ENV TZ=UTC
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+# switch to root user, but no need to switch back as this image isn't run
+USER root
+
 # install base utilities
 RUN apt-get update -q \
  && apt-get install -qy --no-install-recommends \
