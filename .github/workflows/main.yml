@@ -21,6 +21,10 @@ jobs:
 
         include:
 
+          # heroku-24
+          - heroku_stack: "24"
+            r_version: "4.4.2"
+
           # heroku-22
           - heroku_stack: "22"
             r_version: "4.2.1"
@@ -28,10 +32,6 @@ jobs:
           # heroku-20
           - heroku_stack: "20"
             r_version: "4.2.1"
-
-          # heroku-18
-          - heroku_stack: "18"
-            r_version: "4.2.0"
 
     env:
       HEROKU_STACK: ${{ matrix.heroku_stack }}
