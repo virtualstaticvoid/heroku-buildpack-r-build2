@@ -62,7 +62,8 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 .PHONY: .apt_check
 .apt_check:
 
-	docker build --tag $(APT_VERSION_IMAGE) \
+	docker build --progress=plain \
+	             --tag $(APT_VERSION_IMAGE) \
 							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
 							 --build-arg CRAN_VERSION=$(CRAN_VERSION) \
 							 --file Dockerfile.check .
@@ -73,7 +74,8 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 .build_prebuild: R-$(R_VERSION).tar.gz tcl$(TCLTK_VERSION)-src.tar.gz tk$(TCLTK_VERSION)-src.tar.gz .pull
 
 	# build R binaries
-	docker build --tag $(PRE_BUILD_IMAGE) \
+	docker build --progress=plain \
+	             --tag $(PRE_BUILD_IMAGE) \
 							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
 							 --build-arg UBUNTU_IMAGE=$(UBUNTU_IMAGE) \
 							 --build-arg R_VERSION=$(R_VERSION) \
@@ -85,7 +87,8 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 .PHONY: .build_base
 .build_base:
 
-	docker build --tag $(BUILD_IMAGE) \
+	docker build --progress=plain \
+	             --tag $(BUILD_IMAGE) \
 							 --build-arg PRE_BUILD_IMAGE=$(PRE_BUILD_IMAGE) \
 							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
 							 --build-arg R_VERSION=$(R_VERSION) \
@@ -94,7 +97,8 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 .PHONY: .build_chroot
 .build_chroot:
 
-	docker build --tag $(CHROOT_IMAGE) \
+	docker build --progress=plain \
+	             --tag $(CHROOT_IMAGE) \
 							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
 							 --build-arg R_VERSION=$(R_VERSION) \
 							 --build-arg CRAN_VERSION=$(CRAN_VERSION) \
@@ -116,7 +120,8 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 .build_shiny:
 
 	# build shiny binaries
-	docker build --tag $(SHINY_IMAGE) \
+	docker build --progress=plain \
+	             --tag $(SHINY_IMAGE) \
 							 --build-arg BUILD_IMAGE=$(BUILD_IMAGE) \
 							 --file Dockerfile.shiny .
 
@@ -128,7 +133,8 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 .build_plumber:
 
 	# build plumber binaries
-	docker build --tag $(PLUMBER_IMAGE) \
+	docker build --progress=plain \
+	             --tag $(PLUMBER_IMAGE) \
 							 --build-arg BUILD_IMAGE=$(BUILD_IMAGE) \
 							 --file Dockerfile.plumber .
 
@@ -139,7 +145,8 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 .PHONY: .build_test
 .build_test:
 
-	docker build --tag $(TEST_IMAGE) \
+	docker build --progress=plain \
+	             --tag $(TEST_IMAGE) \
 							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
 							 --file test/Dockerfile \
 							 .
