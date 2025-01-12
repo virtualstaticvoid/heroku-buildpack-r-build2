@@ -12,6 +12,9 @@ ENV BUILD_DIR=$HEROKU_DIR/build
 ENV CACHE_DIR=$HEROKU_DIR/cache
 ENV ENV_DIR=$HEROKU_DIR/env
 
+# switch to root user, but no need to switch back as this image isn't run
+USER root
+
 # placeholder directories and files to emulate Heroku environment at slug compile time
 RUN mkdir -p $APP_DIR $BUILDPACK_DIR $BUILD_DIR $CACHE_DIR $ENV_DIR \
  && mkdir -p $APP_DIR/foo \
