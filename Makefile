@@ -39,17 +39,17 @@ endif
 R-$(R_VERSION).tar.gz:
 
 	# download R sources
-	curl -sLO https://cran.rstudio.com/src/base/R-$(R_VERSION_MAJOR)/R-$(R_VERSION).tar.gz
+	curl -fsSLO https://cran.rstudio.com/src/base/R-$(R_VERSION_MAJOR)/R-$(R_VERSION).tar.gz
 
 tcl$(TCLTK_VERSION)-src.tar.gz:
 
 	# download tcl sources
-	curl -sLO https://heroku-buildpack-r.s3.amazonaws.com/tcl$(TCLTK_VERSION)-src.tar.gz
+	curl -fsSLO https://heroku-buildpack-r.s3.amazonaws.com/tcl$(TCLTK_VERSION)-src.tar.gz
 
 tk$(TCLTK_VERSION)-src.tar.gz:
 
 	# download tk sources
-	curl -sLO https://heroku-buildpack-r.s3.amazonaws.com/tk$(TCLTK_VERSION)-src.tar.gz
+	curl -fsSLO https://heroku-buildpack-r.s3.amazonaws.com/tk$(TCLTK_VERSION)-src.tar.gz
 
 # -- BUILD
 
