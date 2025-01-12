@@ -25,14 +25,6 @@ jobs:
           - heroku_stack: "24"
             r_version: "4.4.2"
 
-          # heroku-22
-          - heroku_stack: "22"
-            r_version: "4.2.1"
-
-          # heroku-20
-          - heroku_stack: "20"
-            r_version: "4.2.1"
-
     env:
       HEROKU_STACK: ${{ matrix.heroku_stack }}
       R_VERSION: ${{ matrix.r_version }}
