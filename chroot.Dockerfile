@@ -70,26 +70,6 @@ RUN --mount=type=bind,source=scripts/pkg_depends.rb,target=pkg_depends.rb \
 # add R and tcltk libraries to ldd search paths
 COPY scripts/ldd.conf /etc/ld.so.conf.d/app-R-tcltk.conf
 
-# rewrite symlinks for blas and lapack
-#  i.e. don't use alternatives mechanism for these components
-RUN cd /usr/lib/x86_64-linux-gnu/ \
-  && ln -sf $(readlink /etc/alternatives/lapack.pc-x86_64-linux-gnu) lapack.pc \
-  && ln -sf $(readlink /etc/alternatives/libblas.a-x86_64-linux-gnu) libblas.a \
-  && ln -sf $(readlink /etc/alternatives/libblas.so.3-x86_64-linux-gnu) libblas.so.3 \
-  && ln -sf $(readlink /etc/alternatives/libblas.so-x86_64-linux-gnu) libblas.so \
-  && ln -sf $(readlink /etc/alternatives/liblapack.a-x86_64-linux-gnu) liblapack.a \
-  && ln -sf $(readlink /etc/alternatives/liblapack.so.3-x86_64-linux-gnu) liblapack.so.3 \
-  && ln -sf $(readlink /etc/alternatives/liblapack.so-x86_64-linux-gnu) liblapack.so \
-  && ln -sf $(readlink /etc/alternatives/blas.pc-x86_64-linux-gnu) blas.pc \
-  && ln -sf $(readlink /etc/alternatives/cblas.h-x86_64-linux-gnu) cblas.pc
-
-# convert symlinks from absolute to relative
-# since fakechroot ldd/ld doesn't reliably find libraries otherwise
-RUN git clone -b v1.4.3 --single-branch --depth 1 --quiet https://github.com/brandt/symlinks.git \
- && ( cd symlinks && make ) \
- && ( cd /usr/lib/x86_64-linux-gnu/ && /symlinks/symlinks -rc . | grep changed ) \
- && rm -rf symlinks
-
 #
 # clear out dpkg overrides, to avoid the following error
 #
