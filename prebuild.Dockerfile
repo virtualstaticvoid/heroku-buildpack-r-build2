@@ -139,3 +139,5 @@ RUN cd R-$R_VERSION \
 
 RUN cd R-$R_VERSION \
  && make install
+
+RUN echo "\nPKG_LIBS += $(pkg-config --libs openblas)" >> /app/R/lib/R/share/make/vars.mk
