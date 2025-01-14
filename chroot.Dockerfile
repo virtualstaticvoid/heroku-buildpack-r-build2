@@ -42,8 +42,10 @@ RUN apt-get update -q \
       ruby \
       tcl-dev \
       tk-dev \
+      unzip \
       wget \
       xz-utils \
+      zip \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
