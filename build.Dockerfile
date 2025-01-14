@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.4
+
 #
 # prepares the image for creating the archive
 # e.g. removes unneeded files

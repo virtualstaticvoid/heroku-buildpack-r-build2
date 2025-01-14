@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.4
+
 #
 # installs pre-requisites, build environment and compiles R
 #
@@ -57,25 +59,21 @@ RUN apt-get update -q \
 # Tcl / Tk
 ARG TCLTK_VERSION
 
-COPY tcl${TCLTK_VERSION}-src.tar.gz tcl-src.tar.gz
-RUN tar xf tcl-src.tar.gz \
- && rm tcl-src.tar.gz \
+RUN --mount=type=bind,source=tcl${TCLTK_VERSION}-src.tar.gz,target=tcl-src.tar.gz \
+    tar xf tcl-src.tar.gz \
  && cd tcl${TCLTK_VERSION}/unix \
  && ./configure --prefix=/app/tcltk \
-                --enable-shared \
  && make > /dev/null \
  && make install \
  && cd /app \
  && rm -rf tcl${TCLTK_VERSION}
 
-COPY tk${TCLTK_VERSION}-src.tar.gz tk-src.tar.gz
-RUN tar xf tk-src.tar.gz \
- && rm tk-src.tar.gz \
+RUN --mount=type=bind,source=tk${TCLTK_VERSION}-src.tar.gz,target=tk-src.tar.gz \
+    tar xf tk-src.tar.gz \
  && cd tk${TCLTK_VERSION}/unix \
  && export CPATH=/app/tcltk/include \
  && ./configure --prefix=/app/tcltk \
                 --with-tcl=/app/tcltk/lib \
-                --enable-shared \
  && make > /dev/null \
  && make install \
  && cd /app \
@@ -105,9 +103,8 @@ RUN apt-get update -q \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-COPY R-$R_VERSION.tar.gz .
-RUN tar xzf R-$R_VERSION.tar.gz \
- && rm R-$R_VERSION.tar.gz
+RUN --mount=type=bind,source=R-$R_VERSION.tar.gz,target=R-$R_VERSION.tar.gz \
+    tar xzf R-$R_VERSION.tar.gz
 
 # https://cran.r-project.org/doc/manuals/R-admin.html#Installing-R-under-Unix_002dalikes
 
