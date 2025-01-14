@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.4
+
 ARG HEROKU_STACK
 FROM heroku/heroku:$HEROKU_STACK-build
 

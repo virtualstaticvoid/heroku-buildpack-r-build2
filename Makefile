@@ -66,7 +66,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 	             --tag $(APT_VERSION_IMAGE) \
 							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
 							 --build-arg CRAN_VERSION=$(CRAN_VERSION) \
-							 --file Dockerfile.check .
+							 --file check.Dockerfile .
 
 	docker run --tty --rm $(APT_VERSION_IMAGE) > .apt_check.$(HEROKU_STACK)
 
@@ -82,7 +82,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 							 --build-arg CRAN_VERSION=$(CRAN_VERSION) \
 							 --build-arg TCLTK_VERSION=$(TCLTK_VERSION) \
 							 --build-arg PANDOC_VERSION=$(PANDOC_VERSION) \
-							 --file Dockerfile.prebuild .
+							 --file prebuild.Dockerfile .
 
 .PHONY: .build_base
 .build_base:
@@ -92,7 +92,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 							 --build-arg PRE_BUILD_IMAGE=$(PRE_BUILD_IMAGE) \
 							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
 							 --build-arg R_VERSION=$(R_VERSION) \
-							 --file Dockerfile.build .
+							 --file build.Dockerfile .
 
 .PHONY: .build_chroot
 .build_chroot:
@@ -102,7 +102,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 							 --build-arg HEROKU_STACK=$(HEROKU_STACK) \
 							 --build-arg R_VERSION=$(R_VERSION) \
 							 --build-arg CRAN_VERSION=$(CRAN_VERSION) \
-							 --file Dockerfile.chroot .
+							 --file chroot.Dockerfile .
 
 .PHONY: .build_archives
 .build_archives:
@@ -123,7 +123,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 	docker build --progress=plain \
 	             --tag $(SHINY_IMAGE) \
 							 --build-arg BUILD_IMAGE=$(BUILD_IMAGE) \
-							 --file Dockerfile.shiny .
+							 --file shiny.Dockerfile .
 
 	# this archive is installed to /app/R/site-library
 	docker run --rm --volume "$(PWD)/artifacts:/artifacts" $(SHINY_IMAGE) \
@@ -136,7 +136,7 @@ tk$(TCLTK_VERSION)-src.tar.gz:
 	docker build --progress=plain \
 	             --tag $(PLUMBER_IMAGE) \
 							 --build-arg BUILD_IMAGE=$(BUILD_IMAGE) \
-							 --file Dockerfile.plumber .
+							 --file plumber.Dockerfile .
 
 	# this archive is installed to /app/R/site-library
 	docker run --rm --volume "$(PWD)/artifacts:/artifacts" $(PLUMBER_IMAGE) \

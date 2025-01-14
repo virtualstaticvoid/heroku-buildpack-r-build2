@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.4
+
 ARG HEROKU_STACK
 FROM heroku/heroku:$HEROKU_STACK-build
 
@@ -56,15 +58,12 @@ RUN ubuntu_codename=$(lsb_release -c | awk '{print $2}') \
  && echo "deb-src [signed-by=/etc/apt/keyrings/cloud.r-project.org.gpg] https://cloud.r-project.org/bin/linux/ubuntu ${ubuntu_codename}-$CRAN_VERSION/" >> /etc/apt/sources.list.d/r.list
 
 # figure out dependent packages of r-base-core and r-base-dev
-COPY scripts/pkg_depends.rb .
-
-RUN apt-get update -q \
+RUN --mount=type=bind,source=scripts/pkg_depends.rb,target=pkg_depends.rb \
+    apt-get update -q \
  && PACKAGES=$(ruby pkg_depends.rb $R_VERSION) \
  && apt-get install -qy $PACKAGES \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
-
-RUN rm pkg_depends.rb
 
 # add R and tcltk libraries to ldd search paths
 COPY scripts/ldd.conf /etc/ld.so.conf.d/app-R-tcltk.conf
