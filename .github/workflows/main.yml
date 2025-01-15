@@ -1,5 +1,7 @@
 name: CI
 
+# NB: add GitHub Actions Secret for AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
+
 on:
   push:
     tags:
@@ -7,6 +9,9 @@ on:
   pull_request:
     branches:
       - main
+
+env:
+  AWS_REGION: us-east-1
 
 jobs:
   build:
@@ -45,7 +50,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Upload Artifacts
         run: make --no-builtin-rules upload_artifacts BUILDPACK_VERSION=builds/${GITHUB_RUN_ID}
